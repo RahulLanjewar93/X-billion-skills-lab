@@ -1,17 +1,19 @@
 import { Box, Button, Chip, Grid, Paper, TextField, Typography } from '@mui/material';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import SendIcon from '@mui/icons-material/Send';
 import SaveIcon from '@mui/icons-material/Save';
 import { ChatContext } from '../ChatArea';
 
 const Chat = () => {
-    const { activeconversation, chats, setChats, activechat, setActiveChat, setConversations } = useContext(ChatContext)
+    const { activeconversation, setChats, activechat, setConversations } = useContext(ChatContext)
     const addChatRef = useRef()
 
     const addChat = () => {
+        let date = new Date()
+        if (addChatRef.current.value === '') return
+        if (activeconversation.solved) return
         setChats(prevState => {
-            let date = new Date()
             const chatObj = {
                 chatTypeId: 1,
                 message: addChatRef.current.value,
@@ -20,6 +22,16 @@ const Chat = () => {
                 conversationId: activeconversation.id,
             }
             return [...prevState, chatObj]
+        })
+
+        setConversations(prevConversations => {
+            let newConversations = prevConversations.map(conversation => {
+                if (conversation.id === activeconversation.id) {
+                    conversation.updatedAt = date;
+                }
+                return conversation
+            })
+            return newConversations
         })
         addChatRef.current.value = ''
     }
@@ -45,7 +57,7 @@ const Chat = () => {
                     let formattedDate = date.split("T")[0].split("-")
                     let formattedTime = date.split("T")[1].split(":")
                     return (
-                        <Box textAlign={chat.userType == 'user' ? "right" : "left"} margin={"10px"} key={index}>
+                        <Box textAlign={chat.userType === 'user' ? "right" : "left"} margin={"10px"} key={index}>
                             <Button variant="contained" display="block" color="success">{chat.message}</Button>
                             <Typography variant='caption' sx={{ fontStyle: 'italic' }} display="block">{formattedDate[1]}-{formattedDate[2]}, {formattedTime[0]}:{formattedTime[1]}</Typography>
                         </Box>

@@ -7,13 +7,14 @@ const SingleChat = ({ conversation }) => {
 
     let mostRecentMessage = chats.filter(chat => {
         if (chat.conversationId === conversation.id) return chat
-        return
+        return false
     })
 
     const changeActiveChat = () => {
-        setActiveConversation(conversation)
-        return
+        return setActiveConversation(conversation)
     }
+
+    let date = new Date(conversation.updatedAt)
 
     return (
         <Box >
@@ -32,7 +33,7 @@ const SingleChat = ({ conversation }) => {
                                     {mostRecentMessage.length !== 0 ?
                                         <Typography variant='h7' display="block">{mostRecentMessage[mostRecentMessage.length - 1].message}</Typography> : null
                                     }
-                                    <Typography>{conversation.updatedAt.split('T')[0]}</Typography>
+                                    <Typography>{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`}</Typography>
                                 </Box>
                             </Box>
                         </Grid>
